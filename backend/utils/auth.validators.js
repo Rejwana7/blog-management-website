@@ -15,6 +15,13 @@ export const validateEmail = (email) => {
     return emailRegex.test(email);
 };
 
+export const validateName = (name) => {
+    return (
+        typeof name === "string" &&
+        /^[\p{L}\p{M}]+(?: [\p{L}\p{M}]+)*$/u.test(name.trim())
+    );
+};
+
 export const validatePhoneNumber = (phoneNumber) => {
     // Convert to string in case a numeric value is passed
     const phone = String(phoneNumber ?? "");

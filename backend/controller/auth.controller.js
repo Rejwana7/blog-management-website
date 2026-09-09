@@ -1,6 +1,6 @@
 import { registerUser, loginUser,forgotPassword, resetPassword,verifyLoginOtp } from "../services/auth.service.js";
 
-import { isEmpty,validateEmail,validatePassword} from "../utils/auth.validators.js";
+import { isEmpty, validateEmail, validateName, validatePassword } from "../utils/auth.validators.js";
 
 export const register = async (req, res) => {
     console.log("REGISTER ROUTE HIT");
@@ -19,6 +19,18 @@ export const register = async (req, res) => {
 
         }
 
+        if (!validateName(firstname)) {
+            return res.status(400).json({
+                message: "First name can contain only letters and spaces."
+            });
+        }
+
+        if (!isEmpty(lastname) && !validateName(lastname)) {
+            return res.status(400).json({
+                message: "Last name can contain only letters and spaces."
+            });
+        }
+
         if (!validateEmail(email)) {
 
             return res.status(400).json({
@@ -33,7 +45,12 @@ export const register = async (req, res) => {
                     "Password must be between 4 and 8 characters long."
             });
       }
-      const user = await registerUser({ firstname, lastname, email, password});
+      const user = await registerUser({
+          firstname: firstname.trim(),
+          lastname: isEmpty(lastname) ? null : lastname.trim(),
+          email: email.trim(),
+          password
+      });
 
         return res.status(201).json({
 
