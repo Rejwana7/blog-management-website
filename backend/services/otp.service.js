@@ -14,7 +14,8 @@ export const createAndSendOtp = async (userId, email) => {
     const otpHash = hashOtp(otp);
 
     // 4 seconds expiry
-    const expiresAt = new Date(Date.now() + 4000);
+    const expiresAt = new Date(Date.now() + 3 * 60 * 1000);
+
 
    // Remove previous OTPs
    await OtpVerification.destroy({ where: { userId }});

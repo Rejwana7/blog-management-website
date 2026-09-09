@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
-
+import dotenv from "dotenv";
+dotenv.config()
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -54,7 +55,7 @@ export const sendOtpEmail = async (to, otp) => {
 
             <h1>${otp}</h1>
 
-            <p>This OTP will expire in 3 seconds.</p>
+            <p>This OTP will expire in 3 minutes.</p>
 
             <p>If you did not request this OTP, please ignore this email.</p>
         `
