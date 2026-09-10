@@ -6,7 +6,9 @@ import userRoute from "./routes/user.route.js";
 import blogRoute from "./routes/blogs.route.js";
 import path from "path";
 const app=express();
-app.use(helmet());
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(cors());
 app.use(express.json())
 app.get("/", (req, res) => {

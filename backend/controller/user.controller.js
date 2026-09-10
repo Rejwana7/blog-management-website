@@ -1,6 +1,6 @@
 import { getAllUsers,getUserById,updateUserStatus} from "../services/user.service.js";
 import {getOwnProfile,updateOwnProfile,updatePassword,updateProfileImage} from "../services/user.service.js";
-import { isEmpty, validatePassword,validateEmail} from "../utils/auth.validators.js";
+import { isEmpty, validatePassword, validateEmail, validateName } from "../utils/auth.validators.js";
 
 // GET /api/users
 export const getUsers = async (req, res) => {
@@ -143,7 +143,13 @@ export const updateProfile = async (req, res) => {
             });
         }
 
-        const user = await updateOwnProfile(  req.user.id,  firstname,  lastname,email);
+        if (!validateName(firstname) || (!isEmpty(lastname) && !validateName(lastname))) {
+            return res.status(400).json({
+                message: "First name and last name can contain letters and spaces only."
+            });
+        }
+
+        const user = await updateOwnProfile(req.user.id, firstname.trim(), lastname?.trim() || null, email.trim());
 
         return res.status(200).json({
             message: "Profile updated successfully.",

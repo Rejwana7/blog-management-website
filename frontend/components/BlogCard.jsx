@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatCategoryLabel } from "@/utils/blogs";
 
 export default function BlogCard({ blog }) {
   const authorName = [blog?.author?.firstname, blog?.author?.lastname]
@@ -11,7 +12,7 @@ export default function BlogCard({ blog }) {
   return (
     <article className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-900/5">
       <p className="text-xs font-bold uppercase tracking-[0.16em] text-violet-600">
-        {blog?.category ?? "Uncategorized"}
+        {formatCategoryLabel(blog?.category) || "Uncategorized"}
       </p>
       <h2 className="mt-3 text-xl font-bold leading-7 text-slate-900 transition group-hover:text-violet-700">
         {blog?.blogTitle ?? "Untitled blog"}

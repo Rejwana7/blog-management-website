@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { blogService } from "@/services/blog.service";
+import { formatCategoryLabel } from "@/utils/blogs";
 
 function formatDate(value) {
   if (!value) return "—";
@@ -86,7 +87,7 @@ export default function UserBlogList({ title = "", category = "", notice = "" })
           <div className="grid gap-4 md:hidden">
             {blogs.map((blog) => (
               <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" key={blog.id}>
-                <div className="flex items-start justify-between gap-3"><span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">{blog.category}</span><span className="text-xs text-slate-500">{formatDate(blog.createAt)}</span></div>
+                <div className="flex items-start justify-between gap-3"><span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">{formatCategoryLabel(blog.category)}</span><span className="text-xs text-slate-500">{formatDate(blog.createAt)}</span></div>
                 <h2 className="mt-3 text-lg font-bold text-slate-900">{blog.blogTitle}</h2>
                 <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{blog.blog}</p>
                 <p className="mt-3 text-xs text-slate-500">By {getAuthor(blog)}</p>
@@ -101,7 +102,7 @@ export default function UserBlogList({ title = "", category = "", notice = "" })
                 <thead className="bg-slate-50 text-xs uppercase tracking-wider text-slate-500"><tr><th className="px-5 py-4">Title</th><th className="px-5 py-4">Category</th><th className="px-5 py-4">Author</th><th className="px-5 py-4">Created</th><th className="px-5 py-4 text-right">Actions</th></tr></thead>
                 <tbody className="divide-y divide-slate-100">
                   {blogs.map((blog) => (
-                    <tr className="text-sm text-slate-700" key={blog.id}><td className="max-w-xs px-5 py-4 font-bold text-slate-900"><span className="line-clamp-1">{blog.blogTitle}</span></td><td className="px-5 py-4"><span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">{blog.category}</span></td><td className="whitespace-nowrap px-5 py-4">{getAuthor(blog)}</td><td className="whitespace-nowrap px-5 py-4">{formatDate(blog.createAt)}</td><td className="px-5 py-4"><div className="flex justify-end gap-4 font-bold"><Link className="text-violet-600" href={`/blogs/${blog.id}`}>Read</Link><Link className="text-blue-600" href={`/dashboard/blogs/${blog.id}/edit`}>Edit</Link><button className="text-red-600" onClick={() => setSelectedBlog(blog)} type="button">Delete</button></div></td></tr>
+                    <tr className="text-sm text-slate-700" key={blog.id}><td className="max-w-xs px-5 py-4 font-bold text-slate-900"><span className="line-clamp-1">{blog.blogTitle}</span></td><td className="px-5 py-4"><span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">{formatCategoryLabel(blog.category)}</span></td><td className="whitespace-nowrap px-5 py-4">{getAuthor(blog)}</td><td className="whitespace-nowrap px-5 py-4">{formatDate(blog.createAt)}</td><td className="px-5 py-4"><div className="flex justify-end gap-4 font-bold"><Link className="text-violet-600" href={`/blogs/${blog.id}`}>Read</Link><Link className="text-blue-600" href={`/dashboard/blogs/${blog.id}/edit`}>Edit</Link><button className="text-red-600" onClick={() => setSelectedBlog(blog)} type="button">Delete</button></div></td></tr>
                   ))}
                 </tbody>
               </table>

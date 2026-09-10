@@ -1,13 +1,19 @@
 import multer from "multer";
+import fs from "fs";
+import path from "path";
+
+const uploadDirectory = path.join(process.cwd(), "uploads", "profile");
+
+fs.mkdirSync(uploadDirectory, { recursive: true });
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/profile");
+        cb(null, uploadDirectory);
     },
 
     filename: (req, file, cb) => {
         const uniqueName =
-            `${Date.now()}-${file.originalname}`;
+            `${Date.now()}-${path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, "-")}`;
 
         cb(null, uniqueName);
     }
@@ -23,14 +29,15 @@ const fileFilter = (req, file, cb) => {
         "image/jpeg",
         "image/png",
          "image/jpg",
-        "image/webp"
+        "image/webp",
+        "image/avif"
     ];
 
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
         cb(
-            new Error("Only JPG, JPEG, PNG and WEBP images are allowed."),
+            new Error("Only JPG, JPEG, PNG, WEBP and AVIF images are allowed."),
             false
         );
     }

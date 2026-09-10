@@ -4,8 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { blogService } from "@/services/blog.service";
 
-const CATEGORY_SUGGESTIONS = ["Testing", "Automation", "JavaScript", "Backend", "DevOps"];
-
 function validate(values) {
   const errors = {};
   if (!values.blogTitle.trim()) errors.blogTitle = "Blog title is required.";
@@ -31,11 +29,6 @@ export default function BlogForm({ mode = "create", blogId, initialValues = {} }
     setValues((current) => ({ ...current, [name]: value }));
     setErrors((current) => ({ ...current, [name]: "" }));
     setServerError("");
-  }
-
-  function chooseCategory(category) {
-    setValues((current) => ({ ...current, category }));
-    setErrors((current) => ({ ...current, category: "" }));
   }
 
   async function handleSubmit(event) {
@@ -83,14 +76,9 @@ export default function BlogForm({ mode = "create", blogId, initialValues = {} }
       <div>
         <label className="block" htmlFor="category">
           <span className="mb-2 block text-sm font-bold text-slate-800">Category <span className="text-red-500" aria-hidden="true">*</span></span>
-          <input aria-describedby="category-help category-error" aria-invalid={Boolean(errors.category)} className={inputClass(errors.category)} id="category" name="category" onChange={updateField} placeholder="e.g. Automation" value={values.category} />
+          <input aria-describedby="category-help category-error" aria-invalid={Boolean(errors.category)} className={inputClass(errors.category)} id="category" name="category" onChange={updateField} placeholder="Enter a category" value={values.category} />
         </label>
-        {errors.category ? <p className="mt-2 text-sm text-red-600" id="category-error">{errors.category}</p> : <p className="mt-2 text-xs text-slate-500" id="category-help">Suggestions: choose one below or write your own category.</p>}
-        <div className="mt-3 flex flex-wrap gap-2" aria-label="Category suggestions">
-          {CATEGORY_SUGGESTIONS.map((category) => (
-            <button className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${values.category === category ? "border-violet-600 bg-violet-600 text-white" : "border-slate-200 bg-slate-50 text-slate-600 hover:border-violet-300 hover:text-violet-700"}`} key={category} onClick={() => chooseCategory(category)} type="button">{category}</button>
-          ))}
-        </div>
+        {errors.category ? <p className="mt-2 text-sm text-red-600" id="category-error">{errors.category}</p> : <p className="mt-2 text-xs text-slate-500" id="category-help">Enter any category that best describes your blog.</p>}
       </div>
 
       <label className="block" htmlFor="blog">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { blogService } from "@/services/blog.service";
+import { formatCategoryLabel } from "@/utils/blogs";
 
 function DashboardSkeleton() {
   return (
@@ -90,7 +91,7 @@ export default function UserDashboard() {
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 {recentBlogs.map((blog) => (
                   <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" key={blog.id}>
-                    <p className="text-xs font-bold uppercase tracking-wider text-violet-600">{blog.category}</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-violet-600">{formatCategoryLabel(blog.category)}</p>
                     <h3 className="mt-3 line-clamp-2 text-lg font-bold text-slate-900">{blog.blogTitle}</h3>
                     <div className="mt-5 flex gap-4 text-sm font-bold"><Link className="text-violet-600" href={`/blogs/${blog.id}`}>Read</Link><Link className="text-slate-600" href={`/dashboard/blogs/${blog.id}/edit`}>Edit</Link></div>
                   </article>

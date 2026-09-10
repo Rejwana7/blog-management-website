@@ -1,4 +1,4 @@
-import { Op } from "sequelize";
+import { col, fn, Op, where as sequelizeWhere } from "sequelize";
 import Blog from "../models/blog.model.js";
 import User from "../models/user.model.js";
 
@@ -26,7 +26,10 @@ export const getAllBlogs = async ({ title, category }) => {
 
     // Filter by category
     if (category) {
-        where.category = category;
+        where[Op.and] = sequelizeWhere(
+            fn("LOWER", col("Blog.category")),
+            category.trim().toLocaleLowerCase()
+        );
     }
      const blogs = await Blog.findAll({ where,attributes: [
             "id",
