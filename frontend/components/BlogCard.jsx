@@ -1,10 +1,20 @@
 import Link from "next/link";
 import { formatCategoryLabel } from "@/utils/blogs";
+import { getAssetUrl } from "@/utils/api";
+
+function formatDate(value) {
+  if (!value) return "Date unavailable";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Date unavailable";
+  return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(date);
+}
 
 export default function BlogCard({ blog }) {
   const authorName = [blog?.author?.firstname, blog?.author?.lastname]
     .filter(Boolean)
     .join(" ") || "Community writer";
+  const authorInitials = `${blog?.author?.firstname?.trim()?.[0] ?? ""}${blog?.author?.lastname?.trim()?.[0] ?? ""}`.toUpperCase() || "A";
+  const authorImageUrl = getAssetUrl(blog?.author?.profilePicture);
   const excerpt = blog?.blog?.length > 150
     ? `${blog.blog.slice(0, 150)}…`
     : blog?.blog;
@@ -21,7 +31,17 @@ export default function BlogCard({ blog }) {
         {excerpt ?? "No preview is available for this blog."}
       </p>
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
-        <span className="min-w-0 break-words text-xs font-medium text-slate-500">By {authorName}</span>
+        <div className="flex min-w-0 items-center gap-3">
+          {authorImageUrl ? (
+            <span aria-label={`${authorName}'s profile picture`} className="size-9 shrink-0 rounded-full bg-slate-200 bg-cover bg-center ring-2 ring-violet-100" role="img" style={{ backgroundImage: `url(${authorImageUrl})` }} />
+          ) : (
+            <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-full bg-linear-to-br from-violet-600 to-sky-500 text-xs font-black text-white">{authorInitials}</span>
+          )}
+          <span className="min-w-0 text-xs text-slate-500">
+            <span className="block break-words font-semibold text-slate-700">{authorName}</span>
+            <time dateTime={blog?.createAt}>{formatDate(blog?.createAt)}</time>
+          </span>
+        </div>
         <Link className="shrink-0 text-sm font-bold text-violet-600 hover:text-violet-800" href={`/blogs/${blog?.id}`}>
           Read article <span aria-hidden="true">→</span>
         </Link>

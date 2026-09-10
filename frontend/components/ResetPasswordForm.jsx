@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { authService } from "@/services/auth.service";
 import { isRequired, passwordsMatch } from "@/utils/validation";
 
@@ -13,11 +14,22 @@ function FieldError({ id, message }) {
 }
 
 export default function ResetPasswordForm({ token }) {
+  const router = useRouter();
   const [values, setValues] = useState({ newPassword: "", confirmPassword: "" });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!successMessage) return undefined;
+
+    const redirectTimer = window.setTimeout(() => {
+      router.replace("/login");
+    }, 2000);
+
+    return () => window.clearTimeout(redirectTimer);
+  }, [router, successMessage]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -80,6 +92,7 @@ export default function ResetPasswordForm({ token }) {
         <div className="mx-auto grid size-12 place-items-center rounded-full bg-emerald-100 text-xl text-emerald-700" aria-hidden="true">&#10003;</div>
         <h2 className="mt-5 text-xl font-bold text-slate-900">Password updated</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600" role="status">{successMessage}</p>
+        <p className="mt-2 text-xs text-slate-500">Redirecting you to login...</p>
         <Link className="mt-6 inline-block rounded-xl bg-violet-600 px-6 py-3 text-sm font-bold text-white hover:bg-violet-700" href="/login">Go to login</Link>
       </div>
     );

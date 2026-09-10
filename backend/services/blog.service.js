@@ -45,7 +45,7 @@ export const getAllBlogs = async ({ title, category }) => {
             {
                 model: User,
                 as: "author",
-                attributes: [ "id","firstname", "lastname"   ]
+                attributes: ["id", "firstname", "lastname", "profilePicture"]
             }
         ],
 
@@ -76,7 +76,8 @@ export const getBlogById = async (id) => {
                 attributes: [
                     "id",
                     "firstname",
-                    "lastname"
+                    "lastname",
+                    "profilePicture"
                 ]
             }
 
