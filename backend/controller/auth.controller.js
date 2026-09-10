@@ -142,10 +142,19 @@ export const login = async (req, res) => {
             });
         }
 
-        const result = await loginUser(  email, password );
+        
+        const requestedTestOtp = req.get("x-use-test-otp") === "true";
+
+       const result = await loginUser(
+    email.trim().toLowerCase(),
+    password,
+    { useTestOtp: requestedTestOtp }
+  );
 
         return res.status(200).json({
-            message: "OTP sent to your email.",
+            message: result.otpDelivery === "development"
+                ? "Development OTP created."
+                : "OTP sent to your email.",
             data: result
         });
 
@@ -215,7 +224,7 @@ export const forgotPasswordController = async (req, res) => {
             return res.status(400).json({ message: "Invalid email format." });
         }
 
-        const result = await forgotPassword(email);
+        const result = await forgotPassword(email.trim().toLowerCase());
 
         return res.status(200).json(result);
 

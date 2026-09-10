@@ -5,10 +5,22 @@ import { generateOtp,hashOtp} from "../utils/otp.utils.js";
 
 import {  sendOtpEmail} from "../utils/mailer.js";
 
-export const createAndSendOtp = async (userId, email) => {
+export const createAndSendOtp = async (userId, email, { useDevelopmentOtp = false } = {}) => {
 
-    // Generate OTP
-    const otp = generateOtp();
+    const shouldUseDevelopmentOtp =
+        process.env.NODE_ENV === "development" && useDevelopmentOtp;
+    const developmentOtp = shouldUseDevelopmentOtp
+        ? process.env.DEV_OTP
+        : null;
+
+    if (shouldUseDevelopmentOtp && !/^\d{6}$/.test(developmentOtp || "")) {
+        const error = new Error("DEV_OTP must be exactly 6 digits.");
+        error.statusCode = 500;
+        throw error;
+    }
+
+    // Use a fixed OTP only in development; production always gets a random OTP.
+    const otp = developmentOtp || generateOtp();
 
     // Hash OTP
     const otpHash = hashOtp(otp);
@@ -23,8 +35,13 @@ export const createAndSendOtp = async (userId, email) => {
     // Save new OTP
     await OtpVerification.create({userId,otpHash,expiresAt});
 
-  // Send OTP email
-    await sendOtpEmail(email, otp);
+    if (!developmentOtp) {
+        await sendOtpEmail(email, otp);
+    }
+
+    return {
+        otpDelivery: developmentOtp ? "development" : "email"
+    };
 
 };
 

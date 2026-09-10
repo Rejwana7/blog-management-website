@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-export const sendResetEmail = async (to, resetLink) => {
+export const sendResetEmail = async (to, resetLink, expiryMinutes) => {
     await transporter.sendMail({
         from: process.env.GMAIL,
         to: to,
@@ -34,7 +34,7 @@ export const sendResetEmail = async (to, resetLink) => {
                 Reset Password
             </a>
 
-            <p>This link will expire in 20 minutes.</p>
+            <p>This link will expire in ${expiryMinutes} minutes.</p>
 
             <p>If you did not request this, you can ignore this email.</p>
         `

@@ -35,7 +35,7 @@ export const registerUser=async({ firstname,lastname,email, password})=>{
 
  
     
-export const loginUser = async (email, password) => {
+export const loginUser = async (email, password, { useTestOtp = false } = {}) => {
 
     const user = await User.findOne({where: { email } });
 
@@ -58,12 +58,20 @@ export const loginUser = async (email, password) => {
         error.statusCode = 401;
         throw error;
     }
-   // Send OTP
-    await createAndSendOtp( user.id, user.email);
+   const useDevelopmentOtp =
+       process.env.NODE_ENV === "development" &&
+       (user.role === "admin" || useTestOtp);
+
+   const { otpDelivery } = await createAndSendOtp(
+       user.id,
+       user.email,
+       { useDevelopmentOtp }
+   );
 
      return {
         requiresOtp: true,
-        email: user.email
+        email: user.email,
+        otpDelivery
     };
 };
 
@@ -93,19 +101,18 @@ export const verifyLoginOtp = async (email, otp) => {
 };
 
 export const forgotPassword = async (email) => {
-     const genericResponse = {
-        message:
-            "If an account exists with this email, a password reset link has been sent."
-    };
-
     const user = await User.findOne({ where: { email }});
 
      if (!user) {
-        return genericResponse;
+        const error = new Error("No account found with this email.");
+        error.statusCode = 404;
+        throw error;
     }
 
      if (!user.isActive) {
-        return genericResponse;
+        const error = new Error("This account is deactivated.");
+        error.statusCode = 403;
+        throw error;
     }
 
     // Generate random token
@@ -134,7 +141,7 @@ export const forgotPassword = async (email) => {
         `${process.env.FRONTEND_URL}/reset-password/${token}`;
 
     // Send email
-    await sendResetEmail(user.email, resetLink);
+    await sendResetEmail(user.email, resetLink, minutes);
 
     return {
         message: "Password reset link has been sent to your email."
