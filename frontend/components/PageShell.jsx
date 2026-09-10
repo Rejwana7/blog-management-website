@@ -13,7 +13,7 @@ export default function PageShell({
       </h1>
 
       {description ? (
-        <p className={`mt-2 break-words ${descriptionClassName}`}>
+        <p className={`mt-2 wrap-break-word  ${descriptionClassName}`}>
           {description}
         </p>
       ) : null}

@@ -28,7 +28,7 @@ export default function ProfileMenu() {
         {imageUrl ? (
           <span aria-label={`${fullName}'s profile picture`} className="size-9 rounded-full bg-cover bg-center ring-2 ring-white shadow" role="img" style={{ backgroundImage: `url(${imageUrl})` }} />
         ) : (
-          <span className="grid size-9 place-items-center rounded-full bg-gradient-to-br from-violet-600 to-sky-500 text-xs font-black text-white shadow" aria-hidden="true">{getInitials(user)}</span>
+          <span className="grid size-9 place-items-center rounded-full bg-linear-to-br from-violet-600 to-sky-500 text-xs font-black text-white shadow" aria-hidden="true">{getInitials(user)}</span>
         )}
         <span className="hidden max-w-36 truncate text-sm font-bold text-slate-800 sm:block">{fullName}</span>
         <svg aria-hidden="true" className="hidden size-4 text-slate-400 transition group-open:rotate-180 sm:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" /></svg>

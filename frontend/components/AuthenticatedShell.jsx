@@ -24,7 +24,7 @@ export default function AuthenticatedShell({ children }) {
   }
 
   return (
-    <div className="min-h-screen min-w-0 overflow-x-clip bg-slate-50 pt-[8.25rem] md:pt-18">
+    <div className="min-h-screen min-w-0 overflow-x-clip bg-slate-50 pt-33 md:pt-18">
       <AuthenticatedNavbar />
       <Sidebar />
       <main className="min-h-[calc(100vh-4.5rem)] min-w-0 md:ml-64">{children}</main>

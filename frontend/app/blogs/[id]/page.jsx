@@ -18,7 +18,7 @@ export default async function BlogDetailsPage({ params }) {
       <PublicLayout>
         <section className="mx-auto min-w-0 max-w-3xl px-4 py-14 text-center sm:px-6 sm:py-20">
           <p className="text-sm font-bold uppercase tracking-wider text-violet-600">Article unavailable</p>
-          <h1 className="mt-3 break-words text-3xl font-black text-slate-950">We could not load this blog.</h1>
+          <h1 className="mt-3 wrap-break-word text-3xl font-black text-slate-950">We could not load this blog.</h1>
           <p className="mt-4 text-slate-600">It may have been removed, or the backend server may be offline.</p>
           <Link className="mt-8 inline-block rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white" href="/#latest-blogs">Back to blogs</Link>
         </section>

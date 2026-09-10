@@ -24,7 +24,7 @@ export default function AuthenticatedNavbar() {
           <span className="hidden font-black tracking-tight text-slate-950 sm:block">Blog Application</span>
         </Link>
 
-        <form className="relative col-span-full col-start-1 row-start-2 w-full min-w-0 md:order-none md:mx-auto md:max-w-md" onSubmit={handleSearch} role="search">
+        <form className="relative col-span-full col-start-1 row-start-2 w-full min-w-0 md:order-0 md:mx-auto md:max-w-md" onSubmit={handleSearch} role="search">
           <label className="sr-only" htmlFor="dashboard-search">Search blogs</label>
           <button aria-label="Search blogs" className="absolute inset-y-0 left-0 z-10 grid w-11 place-items-center text-slate-500 transition hover:text-violet-700" type="submit">
             <svg aria-hidden="true" className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">

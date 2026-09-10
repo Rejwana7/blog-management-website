@@ -45,7 +45,7 @@ function MetricCard({ label, value, href, linkLabel }) {
 
 function ProfileCard({ user }) {
   return (
-    <article className="min-w-0 rounded-2xl bg-gradient-to-br from-violet-600 to-sky-500 p-5 text-white shadow-sm sm:p-6">
+    <article className="min-w-0 rounded-2xl bg-linear-to-br from-violet-600 to-sky-500 p-5 text-white shadow-sm sm:p-6">
       <p className="text-sm font-semibold text-violet-100">Profile information</p>
       <p className="mt-3 break-all text-base font-black sm:text-lg">{user.email}</p>
       <p className="mt-1 text-sm capitalize text-violet-100">Role: {user.role}</p>
@@ -139,7 +139,7 @@ export default function UserDashboard() {
               <p className="text-sm font-bold uppercase tracking-[0.16em] text-violet-600">
                 {isAdmin ? "Admin dashboard" : "User dashboard"}
               </p>
-              <h1 className="mt-2 break-words text-2xl font-black tracking-tight text-slate-950 sm:text-4xl">
+              <h1 className="mt-2 wrap-break-word text-2xl font-black tracking-tight text-slate-950 sm:text-4xl">
                 Welcome, {user.firstname}
               </h1>
             </div>
@@ -174,7 +174,7 @@ export default function UserDashboard() {
                 <p className="text-sm font-bold uppercase tracking-[0.16em] text-violet-600">
                   {isAdmin ? "Latest activity" : "Your writing"}
                 </p>
-                <h2 className="mt-2 break-words text-2xl font-black text-slate-950">Recent blogs</h2>
+                <h2 className="mt-2 wrap-break-word text-2xl font-black text-slate-950">Recent blogs</h2>
               </div>
               {blogs.length > 3 ? (
                 <Link className="text-sm font-bold text-violet-600 hover:text-violet-800" href="/dashboard/blogs">
@@ -197,7 +197,7 @@ export default function UserDashboard() {
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 {recentBlogs.map((blog) => (
                   <article className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" key={blog.id}>
-                    <p className="break-words text-xs font-bold uppercase tracking-wider text-violet-600">
+                    <p className="wrap-break-word text-xs font-bold uppercase tracking-wider text-violet-600">
                       {formatCategoryLabel(blog.category)}
                     </p>
                     <h3 className="mt-3 line-clamp-2 text-lg font-bold text-slate-900">{blog.blogTitle}</h3>
