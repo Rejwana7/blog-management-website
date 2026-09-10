@@ -1,21 +1,108 @@
-export default function BlogForm() {
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { blogService } from "@/services/blog.service";
+
+const CATEGORY_SUGGESTIONS = ["Testing", "Automation", "JavaScript", "Backend", "DevOps"];
+
+function validate(values) {
+  const errors = {};
+  if (!values.blogTitle.trim()) errors.blogTitle = "Blog title is required.";
+  if (!values.category.trim()) errors.category = "Category is required.";
+  if (!values.blog.trim()) errors.blog = "Blog content is required.";
+  return errors;
+}
+
+export default function BlogForm({ mode = "create", blogId, initialValues = {} }) {
+  const router = useRouter();
+  const [values, setValues] = useState({
+    blogTitle: initialValues.blogTitle ?? "",
+    category: initialValues.category ?? "",
+    blog: initialValues.blog ?? "",
+  });
+  const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isEditing = mode === "edit";
+
+  function updateField(event) {
+    const { name, value } = event.target;
+    setValues((current) => ({ ...current, [name]: value }));
+    setErrors((current) => ({ ...current, [name]: "" }));
+    setServerError("");
+  }
+
+  function chooseCategory(category) {
+    setValues((current) => ({ ...current, category }));
+    setErrors((current) => ({ ...current, category: "" }));
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const validationErrors = validate(values);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length) return;
+
+    setIsSubmitting(true);
+    setServerError("");
+    const payload = {
+      blogTitle: values.blogTitle.trim(),
+      category: values.category.trim(),
+      blog: values.blog.trim(),
+    };
+
+    try {
+      if (isEditing) {
+        await blogService.update(blogId, payload);
+        router.push("/dashboard/blogs?updated=true");
+      } else {
+        await blogService.create(payload);
+        router.push("/dashboard/blogs?created=true");
+      }
+      router.refresh();
+    } catch (error) {
+      setServerError(error.message || `Unable to ${isEditing ? "update" : "publish"} the blog.`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  const inputClass = (hasError) => `w-full rounded-xl border bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:ring-4 ${hasError ? "border-red-400 focus:border-red-500 focus:ring-red-100" : "border-slate-300 focus:border-violet-500 focus:ring-violet-100"}`;
+
   return (
-    <form className="max-w-2xl space-y-5 rounded-xl border border-slate-200 bg-white p-6">
-      <label className="block">
-        <span className="mb-2 block text-sm font-medium">Title</span>
-        <input className="w-full rounded-lg border border-slate-300 px-3 py-2" name="title" />
+    <form className="space-y-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8" noValidate onSubmit={handleSubmit}>
+      {serverError ? <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">{serverError}</div> : null}
+
+      <label className="block" htmlFor="blogTitle">
+        <span className="mb-2 block text-sm font-bold text-slate-800">Blog Title <span className="text-red-500" aria-hidden="true">*</span></span>
+        <input aria-describedby="blogTitle-help blogTitle-error" aria-invalid={Boolean(errors.blogTitle)} className={inputClass(errors.blogTitle)} id="blogTitle" name="blogTitle" onChange={updateField} placeholder="e.g. Introduction to Playwright" value={values.blogTitle} />
+        {errors.blogTitle ? <p className="mt-2 text-sm text-red-600" id="blogTitle-error">{errors.blogTitle}</p> : <p className="mt-2 text-xs text-slate-500" id="blogTitle-help">Use a clear title that tells readers exactly what they will learn.</p>}
       </label>
-      <label className="block">
-        <span className="mb-2 block text-sm font-medium">Category</span>
-        <input className="w-full rounded-lg border border-slate-300 px-3 py-2" name="category" />
+
+      <div>
+        <label className="block" htmlFor="category">
+          <span className="mb-2 block text-sm font-bold text-slate-800">Category <span className="text-red-500" aria-hidden="true">*</span></span>
+          <input aria-describedby="category-help category-error" aria-invalid={Boolean(errors.category)} className={inputClass(errors.category)} id="category" name="category" onChange={updateField} placeholder="e.g. Automation" value={values.category} />
+        </label>
+        {errors.category ? <p className="mt-2 text-sm text-red-600" id="category-error">{errors.category}</p> : <p className="mt-2 text-xs text-slate-500" id="category-help">Suggestions: choose one below or write your own category.</p>}
+        <div className="mt-3 flex flex-wrap gap-2" aria-label="Category suggestions">
+          {CATEGORY_SUGGESTIONS.map((category) => (
+            <button className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${values.category === category ? "border-violet-600 bg-violet-600 text-white" : "border-slate-200 bg-slate-50 text-slate-600 hover:border-violet-300 hover:text-violet-700"}`} key={category} onClick={() => chooseCategory(category)} type="button">{category}</button>
+          ))}
+        </div>
+      </div>
+
+      <label className="block" htmlFor="blog">
+        <span className="mb-2 block text-sm font-bold text-slate-800">Blog Content <span className="text-red-500" aria-hidden="true">*</span></span>
+        <textarea aria-describedby={errors.blog ? "blog-error" : undefined} aria-invalid={Boolean(errors.blog)} className={`${inputClass(errors.blog)} min-h-64 resize-y leading-7`} id="blog" name="blog" onChange={updateField} placeholder="Share what you learned, explain the key ideas, and include a practical example..." value={values.blog} />
+        {errors.blog ? <p className="mt-2 text-sm text-red-600" id="blog-error">{errors.blog}</p> : null}
       </label>
-      <label className="block">
-        <span className="mb-2 block text-sm font-medium">Content</span>
-        <textarea className="min-h-48 w-full rounded-lg border border-slate-300 px-3 py-2" name="content" />
-      </label>
-      <button className="rounded-lg bg-blue-600 px-5 py-2.5 font-medium text-white" type="submit">
-        Save blog
-      </button>
+
+      <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:justify-end">
+        <button className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60" disabled={isSubmitting} onClick={() => router.back()} type="button">Cancel</button>
+        <button className="rounded-xl bg-violet-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60" disabled={isSubmitting} type="submit">{isSubmitting ? (isEditing ? "Saving..." : "Publishing...") : (isEditing ? "Save Changes" : "Publish Blog")}</button>
+      </div>
     </form>
   );
 }

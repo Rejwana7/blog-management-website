@@ -1,5 +1,5 @@
-import PageShell from "@/components/PageShell";
+import UserDashboard from "@/components/UserDashboard";
 
 export default function DashboardPage() {
-  return <PageShell title="Dashboard" description="Your blog-management overview will appear here." />;
+  return <UserDashboard />;
 }
