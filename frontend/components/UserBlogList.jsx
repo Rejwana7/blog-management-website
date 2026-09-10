@@ -24,6 +24,11 @@ function normalizeFilter(value) {
     : "";
 }
 
+export function BlogListTitle() {
+  const { user } = useAuth();
+  return user.role === "admin" ? "All blogs" : "My blogs";
+}
+
 export default function UserBlogList({ title = "", category = "", notice = "" }) {
   const { user } = useAuth();
   const [blogs, setBlogs] = useState([]);
