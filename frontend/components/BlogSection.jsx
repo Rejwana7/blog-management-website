@@ -8,8 +8,8 @@ export default function BlogSection({ blogs, categories = [], loadFailed = false
         <div className="flex min-w-0 flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div className="min-w-0">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-violet-600">From the community</p>
-            <h2 className="mt-3 break-words text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Latest blogs</h2>
-            <p className="mt-3 max-w-2xl text-slate-600">Anyone can browse and read these posts—no account required.</p>
+            <h2 className="mt-3 wrap-break-word text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Latest blogs</h2>
+            
           </div>
           {!loadFailed && blogs.length > 0 ? (
             <p className="text-sm text-slate-500">Showing {blogs.length} {blogs.length === 1 ? "article" : "articles"}</p>
