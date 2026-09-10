@@ -55,7 +55,7 @@ export const sendOtpEmail = async (to, otp) => {
 
             <h1>${otp}</h1>
 
-            <p>This OTP will expire in 3 minutes.</p>
+            <p>This OTP will expire in 2 minutes.</p>
 
             <p>If you did not request this OTP, please ignore this email.</p>
         `

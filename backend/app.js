@@ -1,10 +1,12 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import authRoute from "./routes/auth.route.js";
 import userRoute from "./routes/user.route.js";
 import blogRoute from "./routes/blogs.route.js";
 import path from "path";
 const app=express();
+app.use(helmet());
 app.use(cors());
 app.use(express.json())
 app.get("/", (req, res) => {
