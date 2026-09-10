@@ -389,12 +389,5 @@ npm start          # Run the production build
 npm run lint       # Run ESLint
 ```
 
-## Notes for Production
 
-- Set `NODE_ENV=production`.
-- Replace all demonstration credentials and secrets.
-- Remove `DEV_OTP` from the production environment.
-- Restrict CORS to the deployed frontend origin.
-- Use HTTPS and a production-ready database configuration.
-- Store uploaded media in durable object storage when deploying to an ephemeral platform.
 
