@@ -17,8 +17,8 @@ export default async function LoginPage({ searchParams }) {
         <div className="mx-auto max-w-md">
           <div className="mb-8 text-center">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-violet-600">Welcome back</p>
-            <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Log in to your account</h1>
-            <p className="mt-3 text-sm leading-6 text-slate-600">Enter your credentials and we will send a verification code to your email.</p>
+            <h1 className="mt-3 text-lg font-black tracking-tight text-slate-950 sm:text-3xl">Log in to your account</h1>
+           
           </div>
           <LoginForm registrationSuccessful={registered === "true"} />
         </div>

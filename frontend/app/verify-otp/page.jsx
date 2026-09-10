@@ -15,8 +15,8 @@ export default function VerifyOtpPage() {
         <div className="mx-auto max-w-md">
           <div className="mb-8 text-center">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-violet-600">One more step</p>
-            <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Verify your login</h1>
-            <p className="mt-3 text-sm leading-6 text-slate-600">We sent a six-digit OTP to your email. Enter it below to finish signing in.</p>
+            <h1 className="mt-3 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Verify your login</h1>
+            
           </div>
           <VerifyOtpForm />
         </div>

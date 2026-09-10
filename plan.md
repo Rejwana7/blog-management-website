@@ -261,3 +261,12 @@ frontend/
 - [ ] The application is responsive and keyboard-accessible.
 - [ ] Lint, automated tests, and production build pass.
 - [ ] Setup and usage documentation is complete.
+
+## Notes for Production
+
+- Set `NODE_ENV=production`.
+- Replace all demonstration credentials and secrets.
+- Remove `DEV_OTP` from the production environment.
+- Restrict CORS to the deployed frontend origin.
+- Use HTTPS and a production-ready database configuration.
+- Store uploaded media in durable object storage when deploying to an ephemeral platform.
