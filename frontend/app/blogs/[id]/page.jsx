@@ -1,5 +1,6 @@
 import Link from "next/link";
 import PublicLayout from "@/components/PublicLayout";
+import BlogBackButton from "@/components/BlogBackButton";
 import { blogService } from "@/services/blog.service";
 
 export default async function BlogDetailsPage({ params }) {
@@ -31,7 +32,7 @@ export default async function BlogDetailsPage({ params }) {
   return (
     <PublicLayout>
       <article className="mx-auto min-w-0 max-w-3xl px-4 py-12 sm:px-6 sm:py-20">
-        <Link className="text-sm font-semibold text-violet-600 hover:text-violet-800" href="/#latest-blogs">← Back to blogs</Link>
+        <BlogBackButton />
         <p className="mt-10 break-words text-sm font-bold uppercase tracking-[0.16em] text-violet-600">{blog.category}</p>
         <h1 className="mt-4 break-words text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-5xl">{blog.blogTitle}</h1>
         <p className="mt-5 break-words border-b border-slate-200 pb-8 text-sm text-slate-500">Written by <span className="font-semibold text-slate-700">{authorName}</span></p>
