@@ -42,7 +42,6 @@ export default function RegisterForm() {
     if (name === "password" && value.length > 8) {
       liveError = "Password cannot exceed 8 characters.";
     }
-
     setErrors((current) => ({
       ...current,
       [name]: liveError,

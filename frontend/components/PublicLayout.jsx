@@ -3,9 +3,9 @@ import Navbar from "./Navbar";
 
 export default function PublicLayout({ children }) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen min-w-0 flex-col overflow-x-clip">
       <Navbar />
-      <main className="flex-1">{children}</main>
+      <main className="min-w-0 flex-1">{children}</main>
       <Footer />
     </div>
   );

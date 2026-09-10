@@ -25,7 +25,7 @@ router.get( "/profile", authMiddleWare, getProfile);
 router.put( "/profile/update", authMiddleWare, updateProfile)
 
 // PATCH /api/users/password
-router.patch( "/password", authMiddleWare, updateUserPassword);
+router.patch( "/users/password", authMiddleWare, updateUserPassword);
 
 
 router.patch("/profile/image", authMiddleWare,upload.single("image"),  uploadErrorHandler,

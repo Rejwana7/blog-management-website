@@ -22,9 +22,9 @@ export function getBlogCategories(blogs = []) {
   const categories = new Map();
 
   for (const blog of blogs) {
-    const category = blog?.category?.trim();
+    const category = blog?.category?.trim().replace(/\s+/g, " ");
     const key = category?.toLocaleLowerCase();
-    if (category && !categories.has(key)) categories.set(key, formatCategoryLabel(key));
+    if (category && !categories.has(key)) categories.set(key, formatCategoryLabel(category));
   }
 
   return [...categories.values()].sort((first, second) => first.localeCompare(second));

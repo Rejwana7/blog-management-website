@@ -123,13 +123,13 @@ export default function UserProfile() {
   const inputClass = (hasError) => `mt-2 w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:ring-4 ${hasError ? "border-red-400 focus:border-red-500 focus:ring-red-100" : "border-slate-300 focus:border-violet-500 focus:ring-violet-100"}`;
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="w-full min-w-0 max-w-3xl space-y-6">
       {message.text ? <div className={`rounded-xl border px-4 py-3 text-sm font-medium ${message.type === "error" ? "border-red-200 bg-red-50 text-red-700" : "border-emerald-200 bg-emerald-50 text-emerald-800"}`} role={message.type === "error" ? "alert" : "status"}>{message.text}</div> : null}
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+      <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-8">
         <h2 className="text-xl font-bold text-slate-900">Profile picture</h2>
         <p className="mt-1 text-xs text-slate-500">JPG, PNG, WEBP or AVIF · Maximum 5 MB</p>
-        <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center">
+        <div className="mt-5 flex min-w-0 flex-col gap-5 sm:flex-row sm:items-center">
           <div aria-label={`${fullName}'s avatar`} className="grid size-24 shrink-0 place-items-center rounded-full border-4 border-violet-100 bg-slate-900 bg-cover bg-center text-2xl font-bold text-white shadow-sm" role="img" style={displayedImageUrl ? { backgroundImage: `url(${displayedImageUrl})` } : undefined}>{displayedImageUrl ? <span className="sr-only">Profile image</span> : initials(user)}</div>
           <div className="min-w-0 flex-1">
             <input accept="image/jpeg,image/png,image/webp,image/avif" className="sr-only" id="profile-image" onChange={chooseImage} ref={fileInputRef} type="file" />
@@ -143,14 +143,14 @@ export default function UserProfile() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+      <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-8">
         <h2 className="text-xl font-bold text-slate-900">Profile information</h2>
         <form className="mt-6 grid gap-5 sm:grid-cols-2" noValidate onSubmit={saveProfile}>
           <label className="text-sm font-bold text-slate-800" htmlFor="profile-firstname">First Name <span className="text-red-500">*</span><input aria-invalid={Boolean(nameErrors.firstname)} className={inputClass(nameErrors.firstname)} id="profile-firstname" name="firstname" onChange={updateName} value={names.firstname} />{nameErrors.firstname ? <span className="mt-2 block font-normal text-red-600">{nameErrors.firstname}</span> : null}</label>
           <label className="text-sm font-bold text-slate-800" htmlFor="profile-lastname">Last Name <span className="font-normal text-slate-400">(optional)</span><input aria-invalid={Boolean(nameErrors.lastname)} className={inputClass(nameErrors.lastname)} id="profile-lastname" name="lastname" onChange={updateName} value={names.lastname} />{nameErrors.lastname ? <span className="mt-2 block font-normal text-red-600">{nameErrors.lastname}</span> : null}</label>
           <label className="text-sm font-bold text-slate-800" htmlFor="profile-email">Email <input className="mt-2 w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 outline-none" id="profile-email" readOnly type="email" value={user.email ?? ""} /></label>
           <label className="text-sm font-bold text-slate-800" htmlFor="profile-role">Role <input className="mt-2 w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm capitalize text-slate-600 outline-none" id="profile-role" readOnly value={user.role ?? ""} /></label>
-          <div className="sm:col-span-2 sm:text-right"><button className="rounded-xl bg-violet-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60" disabled={isSaving} type="submit">{isSaving ? "Saving..." : "Save Changes"}</button></div>
+          <div className="sm:col-span-2 sm:text-right"><button className="w-full rounded-xl bg-violet-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" disabled={isSaving} type="submit">{isSaving ? "Saving..." : "Save Changes"}</button></div>
         </form>
       </section>
     </div>

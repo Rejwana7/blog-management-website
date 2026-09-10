@@ -54,15 +54,15 @@ export default function Sidebar() {
 
   function handleLogout() {
     logout();
-    router.replace("/");
+    router.replace("/login");
   }
 
   return (
     <>
-      <div className="border-b border-slate-200 bg-white p-3 md:hidden">
-        <details>
+      <div className="min-w-0 border-b border-slate-200 bg-white p-3 md:hidden">
+        <details className="min-w-0">
           <summary className="cursor-pointer list-none rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 [&::-webkit-details-marker]:hidden">Dashboard menu</summary>
-          <div className="pt-3"><SidebarLinks links={links} pathname={pathname} onLogout={handleLogout} /></div>
+          <div className="min-w-0 pt-3"><SidebarLinks links={links} pathname={pathname} onLogout={handleLogout} /></div>
         </details>
       </div>
       <aside className="fixed bottom-0 left-0 top-18 hidden w-64 overflow-y-auto border-r border-slate-200 bg-white p-5 md:block">

@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { userService } from "@/services/user.service";
-import { getToken, removeToken } from "@/utils/auth";
+import { getToken, removePendingLoginEmail, removeToken } from "@/utils/auth";
 
 const AuthContext = createContext(null);
 
@@ -38,6 +38,7 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(() => {
     removeToken();
+    removePendingLoginEmail();
     setUser(null);
   }, []);
 

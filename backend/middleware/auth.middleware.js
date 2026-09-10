@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
 
-const authMiddleWare=(req,res,next)=>{
+const authMiddleWare=async(req,res,next)=>{
     const authHeader=req.headers.authorization
        if(!authHeader||!authHeader.startsWith("Bearer"))
     {
@@ -13,7 +14,21 @@ const authMiddleWare=(req,res,next)=>{
       try {
 
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
-         req.user = decoded;
+        const currentUser = await User.findByPk(decoded.id, {
+            attributes: ["id", "email", "role", "isActive"]
+        });
+
+        if (!currentUser || !currentUser.isActive) {
+            return res.status(401).json({
+                message: "Your account is inactive or no longer exists."
+            });
+        }
+
+         req.user = {
+            id: currentUser.id,
+            email: currentUser.email,
+            role: currentUser.role
+         };
          next();
      } catch (error) {
 

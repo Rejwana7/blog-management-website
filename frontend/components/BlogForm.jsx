@@ -64,7 +64,7 @@ export default function BlogForm({ mode = "create", blogId, initialValues = {} }
   const inputClass = (hasError) => `w-full rounded-xl border bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:ring-4 ${hasError ? "border-red-400 focus:border-red-500 focus:ring-red-100" : "border-slate-300 focus:border-violet-500 focus:ring-violet-100"}`;
 
   return (
-    <form className="space-y-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8" noValidate onSubmit={handleSubmit}>
+    <form className="min-w-0 space-y-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-8" noValidate onSubmit={handleSubmit}>
       {serverError ? <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">{serverError}</div> : null}
 
       <label className="block" htmlFor="blogTitle">
@@ -88,8 +88,8 @@ export default function BlogForm({ mode = "create", blogId, initialValues = {} }
       </label>
 
       <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:justify-end">
-        <button className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60" disabled={isSubmitting} onClick={() => router.back()} type="button">Cancel</button>
-        <button className="rounded-xl bg-violet-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60" disabled={isSubmitting} type="submit">{isSubmitting ? (isEditing ? "Saving..." : "Publishing...") : (isEditing ? "Save Changes" : "Publish Blog")}</button>
+        <button className="w-full rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" disabled={isSubmitting} onClick={() => router.back()} type="button">Cancel</button>
+        <button className="w-full rounded-xl bg-violet-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" disabled={isSubmitting} type="submit">{isSubmitting ? (isEditing ? "Saving..." : "Publishing...") : (isEditing ? "Save Changes" : "Publish Blog")}</button>
       </div>
     </form>
   );

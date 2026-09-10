@@ -41,8 +41,7 @@ export const register = async (req, res) => {
 
        if (!validatePassword(password)) {
             return res.status(400).json({
-                message:
-                    "Password must be between 4 and 8 characters long."
+                message: "Password must be between 4 and 8 characters."
             });
       }
       const user = await registerUser({
@@ -269,7 +268,7 @@ export const resetPasswordController = async (req, res) => {
 
         if (!validatePassword(newPassword)) {
             return res.status(400).json({
-                message: "Invalid password."
+                message: "Password must be between 4 and 8 characters."
             });
         }
 

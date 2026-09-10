@@ -1,5 +1,10 @@
 import PageShell from "@/components/PageShell";
+import AdminUserManagement from "@/components/AdminUserManagement";
 
 export default function AdminUsersPage() {
-  return <PageShell title="User administration" description="Admin-only user management will be implemented here." />;
+  return (
+    <PageShell title="Users" description="View accounts and manage user access.">
+      <AdminUserManagement />
+    </PageShell>
+  );
 }

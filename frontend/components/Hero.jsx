@@ -5,12 +5,12 @@ export default function Hero() {
     <section className="relative isolate overflow-hidden border-b border-slate-200 bg-white">
       <div className="absolute -left-24 top-12 -z-10 size-72 rounded-full bg-violet-200/50 blur-3xl" />
       <div className="absolute -right-24 bottom-0 -z-10 size-80 rounded-full bg-sky-200/50 blur-3xl" />
-      <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 py-20 sm:py-28 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-32">
-        <div>
-          <p className="mb-5 inline-flex rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-700">
+      <div className="mx-auto grid min-w-0 max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 sm:py-28 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-32">
+        <div className="min-w-0">
+          <p className="mb-5 inline-flex max-w-full rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-700">
             Stories, ideas, and practical knowledge
           </p>
-          <h1 className="max-w-4xl text-4xl font-black tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
+          <h1 className="max-w-4xl break-words text-4xl font-black tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
             Read ideas that <span className="bg-gradient-to-r from-violet-600 to-sky-500 bg-clip-text text-transparent">move you forward.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">

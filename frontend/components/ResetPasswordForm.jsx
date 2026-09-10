@@ -91,7 +91,7 @@ export default function ResetPasswordForm({ token }) {
 
       <label className="block text-sm font-semibold text-slate-700">
         New Password <span className="text-red-500" aria-hidden="true">*</span>
-        <input aria-describedby={errors.newPassword ? "new-password-error" : "new-password-help"} aria-invalid={Boolean(errors.newPassword)} autoComplete="new-password" className={inputClassName} name="newPassword" onChange={handleChange} placeholder="4–8 characters" required type="password" value={values.newPassword} />
+        <input aria-describedby={errors.newPassword ? "new-password-error" : "new-password-help"} aria-invalid={Boolean(errors.newPassword)} autoComplete="new-password" className={inputClassName} minLength={4} name="newPassword" onChange={handleChange} placeholder="4–8 characters" required type="password" value={values.newPassword} />
         <FieldError id="new-password-error" message={errors.newPassword} />
         {!errors.newPassword ? <p className="mt-1.5 text-xs font-normal text-slate-400" id="new-password-help">Use 4 to 8 characters.</p> : null}
       </label>

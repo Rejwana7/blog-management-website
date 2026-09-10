@@ -65,8 +65,8 @@ export const updateStatus = async (req, res) => {
     try {
 
         const { id } = req.params;
-        // isActive বা isactive
-        const isActive = req.body.isActive ?? req.body.isactive;
+        // isActive অথবা isactive
+        const isActive = req.body?.isActive ?? req.body?.isactive;
         if (!/^\d+$/.test(id)) {
             return res.status(400).json({
                 message: "Invalid user ID."
@@ -76,6 +76,12 @@ export const updateStatus = async (req, res) => {
         if (typeof isActive !== "boolean") {
             return res.status(400).json({
                 message: "isActive must be true or false."
+            });
+        }
+
+        if (!isActive && Number(id) === Number(req.user.id)) {
+            return res.status(400).json({
+                message: "You cannot deactivate your own account."
             });
         }
 
@@ -178,7 +184,7 @@ export const updateUserPassword = async (req, res) => {
 
         if (!validatePassword(password)) {
             return res.status(400).json({
-                message: "Password must not exceed 8 characters."
+                message: "Password must be between 4 and 8 characters."
             });
         }
 
