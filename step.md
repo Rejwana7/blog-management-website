@@ -352,6 +352,65 @@ Data migrate করলেও Sequelize application নিজে MongoDB-compatib
 
 Render monorepo-র একটি subdirectory-কে service root করতে পারে: [Render monorepo support](https://render.com/docs/monorepo-support).
 
+## Screenshot (1046) থেকে ঠিক কোথায় click করবেন — no-code-change route
+
+Screenshot-এ **New Web Service → Source Code** screen খোলা আছে এবং `Git Provider` tab selected। এখান থেকে:
+
+1. `Existing Image`-এ click করবেন না। এটি আগে থেকেই Docker Hub/GHCR-এর মতো registry-তে publish করা image-এর জন্য।
+2. Repository list থেকে **`Rejwana7 / blog-management-website`** row-তে click করুন।
+3. পরের configuration form-এ নিচের values দিন:
+
+   | Render field | Value |
+   |---|---|
+   | Name | `blog-management-backend` |
+   | Branch | `main` |
+   | Region | Cloud MySQL-এর কাছাকাছি available region |
+   | Root Directory | `backend` |
+   | Language/Runtime | `Node` |
+   | Build Command | `npm ci` |
+   | Start Command | `npm start` |
+   | Health Check Path | `/` |
+
+4. Instance plan select করুন। Free plan demo-র জন্য ব্যবহার করা গেলেও cold start/other limits থাকতে পারে।
+5. **Environment Variables** section-এ নিচের MySQL variables এবং application secrets দিন।
+6. **Create Web Service/Deploy Web Service** button চাপুন।
+7. Deploy complete হলে Render যে `https://...onrender.com` URL দেবে সেটি browser-এ খুলুন। `/` route-এ API-running JSON message এলে backend live।
+
+একই repository/branch থেকে Render শুধু `backend` folder build করবে। Backend আলাদাভাবে GitHub-এ push করার দরকার নেই; পুরো repository একবার push করাই যথেষ্ট। Branch Render-এ দেখাতে branch-টি আগে GitHub remote-এ push থাকতে হবে।
+
+### Current MySQL code-এর exact no-code environment
+
+Current application code বদলাবেন না বলে Render PostgreSQL/MongoDB নয়, external cloud MySQL ব্যবহার করুন:
+
+```env
+NODE_ENV=development
+DEV_OTP=<secret-six-digit-admin-otp>
+
+DB_HOST=<cloud-mysql-host-not-localhost>
+DB_PORT=3306
+DB_NAME=<cloud-mysql-database-name>
+DB_USER=<cloud-mysql-user>
+DB_PASSWORD=<cloud-mysql-password>
+
+SECRET_KEY=<new-long-random-secret>
+JWT_EXPIRES_IN=24h
+
+GMAIL=<real-sender-gmail>
+GMAIL_APP_PASSWORD=<new-rotated-gmail-app-password>
+
+RESET_TOKEN_EXPIRES_MINUTES=20
+FRONTEND_URL=https://YOUR-FRONTEND.vercel.app
+
+ADMIN_FIRSTNAME=Admin
+ADMIN_LASTNAME=User
+ADMIN_EMAIL=admin@gmail.com
+ADMIN_PASSWORD=<admin-password>
+```
+
+এই বিশেষ `NODE_ENV=development` setup-এ current code অনুযায়ী admin fixed `DEV_OTP` ব্যবহার করবে, কিন্তু normal user frontend test header না পাঠানোয় তার নিজের email-এ random OTP পাবে। এটি assignment/demo convenience, secure public-production configuration নয়। Public production-এর জন্য `NODE_ENV=production`, real admin email এবং emailed random OTP ব্যবহার করুন।
+
+Render-এ আলাদা `PORT` variable add করা দরকার নেই; platform সেটি দেবে। `DB_HOST=localhost` দেবেন না, কারণ Render-এ সেটি deployed container-কেই বোঝায়। External MySQL provider mandatory TLS configuration চাইলে current `db.js`-এ SSL option নেই—সে ক্ষেত্রে আর strictly no-code-change থাকবে না।
+
 ## 1. Web Service settings
 
 Render Dashboard → **New → Web Service**:
@@ -522,6 +581,21 @@ Recommended order:
 # Docker লাগবে কি?
 
 **এই project Render-এ deploy করতে Docker বাধ্যতামূলক নয়।** Render-এর native Node runtime দিয়ে দ্রুত deploy করা যাবে। Render নিজেও Node app-এর জন্য native runtime-কে সহজ starting point হিসেবে উল্লেখ করে; reproducible build বা OS package দরকার হলে Docker useful: [Docker on Render](https://render.com/docs/docker).
+
+### “Docker চাই” এবং “একদম কোনো repository change চাই না”—দুটো একসাথে সম্ভব নয়
+
+Current repository-তে `Dockerfile` নেই এবং কোনো prebuilt image registry-তে publish করা নেই। তাই screenshot-এর `Existing Image` tab দিয়ে এখন deploy করা যাবে না। Exact zero-change route হলো:
+
+```text
+Git Provider → blog-management-website → Root Directory: backend → Runtime: Node
+```
+
+Docker ব্যবহার করার দুটি route:
+
+1. **Git-based Docker build:** repository-তে অন্তত `backend/Dockerfile` এবং `.dockerignore` add করতে হবে। JavaScript business logic বদলাতে হবে না, কিন্তু repository configuration change হবে। এরপর `Git Provider` থেকে repo select করে Root Directory `backend`, Runtime `Docker`, Dockerfile path `Dockerfile` দিন।
+2. **Existing Image:** আগে Dockerfile দিয়ে local/CI-তে image build করে Docker Hub বা GHCR-এ push করতে হবে। তারপর screenshot-এর `Existing Image` tab-এ সেই image URL দিতে হবে। এটি current অবস্থায় no-change option নয়।
+
+Docker শুধু backend package করে; এটি MySQL database দেয় না। Docker নিলেও একই external cloud MySQL এবং একই Render environment variables লাগবে। তাই এখন no-code deadline deployment-এর জন্য **Native Node** select করুন; Docker পরে আলাদা deployment-config branch-এ যোগ করুন।
 
 Docker ব্যবহার করলে সম্ভাব্য `backend/Dockerfile`:
 
