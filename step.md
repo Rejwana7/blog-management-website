@@ -411,6 +411,81 @@ ADMIN_PASSWORD=<admin-password>
 
 Render-এ আলাদা `PORT` variable add করা দরকার নেই; platform সেটি দেবে। `DB_HOST=localhost` দেবেন না, কারণ Render-এ সেটি deployed container-কেই বোঝায়। External MySQL provider mandatory TLS configuration চাইলে current `db.js`-এ SSL option নেই—সে ক্ষেত্রে আর strictly no-code-change থাকবে না।
 
+### Existing local MySQL data রাখতে হলে — no application code change
+
+Docker image বা Render Web Service local MySQL data নিয়ে যায় না। আগে একটি external cloud MySQL database তৈরি করে local `dbblog` schema/data সেখানে copy করতে হবে। Recommended order:
+
+```text
+Local MySQL backup
+        ↓
+Cloud MySQL-এ import
+        ↓
+Data verify
+        ↓
+Render environment-এ cloud DB credentials
+        ↓
+Backend deploy
+```
+
+Migration চলার সময় local application-এ নতুন user/blog লেখা বন্ধ রাখুন, নইলে backup-এর পরের changes cloud database-এ থাকবে না।
+
+#### Method A — DBeaver GUI
+
+DBeaver database-to-database transfer support করে: [DBeaver Data Migration](https://dbeaver.com/docs/dbeaver/Data-migration/).
+
+1. DBeaver-এ existing local MySQL connection রাখুন।
+2. Cloud provider-এর host, port, database, username ও password দিয়ে দ্বিতীয় MySQL connection তৈরি করুন।
+3. Cloud database empty থাকলে backend একবার cloud DB-তে connect করে `sequelize.sync()` দিয়ে tables তৈরি করতে পারে; তারপর data transfer-এর সময় backend stop/idle রাখুন।
+4. Local `dbblog` থেকে `users`, `blogs`, `otp_verifications`, `password_reset_tokens` tables select করুন।
+5. Right-click → **Export Data** → target হিসেবে **Database** নিন।
+6. Target connection/schema হিসেবে cloud MySQL database select করুন।
+7. Column mapping review করুন; `id` এবং `userId` original value-সহ copy করুন।
+8. আগে `users`, পরে `blogs`; active OTP/reset-token দরকার হলে শেষে ওই tables transfer করুন। Expired OTP/reset tokens সাধারণত migrate করার দরকার নেই।
+9. Transfer শেষ হলে source/target row counts এবং কয়েকটি user-blog relationship compare করুন।
+
+#### Method B — MySQL dump/restore
+
+MySQL client installed থাকলে password command-এ লিখবেন না; `-p` prompt ব্যবহার করুন:
+
+```powershell
+mysqldump --host=localhost --port=3306 --user=root -p --single-transaction --routines --triggers --no-tablespaces dbblog --result-file=dbblog.sql
+```
+
+তারপর cloud database-এ import:
+
+```powershell
+mysql --host=<cloud-mysql-host> --port=3306 --user=<cloud-mysql-user> -p <cloud-database-name>
+```
+
+MySQL prompt-এর ভিতরে:
+
+```sql
+SOURCE C:/full/path/to/dbblog.sql;
+```
+
+Import-এর আগে cloud provider-এর network/IP allowlist এবং connection details ঠিক করুন। Import-এর পরে অন্তত এগুলো verify করুন:
+
+```sql
+SELECT COUNT(*) FROM users;
+SELECT COUNT(*) FROM blogs;
+SELECT MAX(id) FROM users;
+SELECT MAX(id) FROM blogs;
+```
+
+`AUTO_INCREMENT` next value imported maximum ID-এর চেয়ে বড় আছে কি না check করুন। Dump restore সাধারণত এটি preserve করে।
+
+#### Existing admin-এর নিয়ম
+
+`users` table-এর existing admin migrate করলে আবার `npm run seed:admin` চালাবেন না। Existing bcrypt password hash, email এবং role database-এর সঙ্গে চলে যাবে। Environment-এর `ADMIN_EMAIL`/`ADMIN_PASSWORD` existing row update করে না; seeder শুধু নতুন admin তৈরির জন্য।
+
+#### Profile pictures database data নয়
+
+`users.profilePicture` column-এ শুধু `/uploads/profile/...` path থাকে; actual image files `backend/uploads/profile/` folder-এ। তাই database migration করলেও images আলাদা করে preserve না করলে পুরনো avatar ভাঙবে।
+
+- Current tracked images Docker image-এ রাখতে চাইলে `.dockerignore` থেকে `uploads` বাদ দিতে হবে; এটি শুধু image build-time files রাখবে।
+- নতুন runtime uploads container restart/redeploy-এ হারাতে পারে। No-JavaScript-change persistent option হলো paid Render disk-এ Docker working directory অনুযায়ী `/app/uploads` mount করা, কিন্তু existing files disk-এ আলাদা করে populate করতে হবে।
+- Long-term recommended object storage-এর জন্য application code change লাগবে।
+
 ## 1. Web Service settings
 
 Render Dashboard → **New → Web Service**:
