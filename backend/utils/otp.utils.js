@@ -1,8 +1,8 @@
 import crypto from "crypto";
 
-// Generate 6 digit OTP
+// Generate 4 digit OTP
 export const generateOtp = () => {
-    return crypto.randomInt(100000, 1000000).toString();
+    return crypto.randomInt(1000, 10000).toString();
 };
 
 // Hash OTP before saving into database
