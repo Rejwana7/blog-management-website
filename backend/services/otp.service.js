@@ -1,74 +1,142 @@
+import { OtpVerification, User } from "../models/association.js";
+import { generateOtp, hashOtp } from "../utils/otp.utils.js";
+import { sendOtpEmail } from "../utils/mailer.js";
 
-import {  OtpVerification,  User} from "../models/association.js";
+export const createAndSendOtp = async (userId, email) => {
+    const normalizedEmail = email.trim().toLowerCase();
 
-import { generateOtp,hashOtp} from "../utils/otp.utils.js";
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
 
-import {  sendOtpEmail} from "../utils/mailer.js";
+    const isAdmin = normalizedEmail === adminEmail;
 
-export const createAndSendOtp = async (userId, email, { useDevelopmentOtp = false } = {}) => {
+    let otp;
+    let otpDelivery;
 
-    const shouldUseDevelopmentOtp =
-        process.env.NODE_ENV === "development" && useDevelopmentOtp;
-    const developmentOtp = shouldUseDevelopmentOtp
-        ? process.env.DEV_OTP
-        : null;
+    
+    // ADMIN OTP
+    
+    if (isAdmin) {
 
-    if (shouldUseDevelopmentOtp && !/^\d{6}$/.test(developmentOtp || "")) {
-        const error = new Error("DEV_OTP must be exactly 6 digits.");
-        error.statusCode = 500;
-        throw error;
+        // Local development
+        if (process.env.NODE_ENV === "development") {
+            otp = process.env.DEV_OTP;
+            otpDelivery = "development";
+
+            if (!/^\d{4}$/.test(otp || "")) {
+                const error = new Error(
+                    "DEV_OTP must be exactly 4 digits."
+                );
+
+                error.statusCode = 500;
+                throw error;
+            }
+        }
+
+        // Production / Render
+        else if (process.env.NODE_ENV === "production") {
+            otp = process.env.ADMIN_OTP;
+            otpDelivery = "admin";
+
+            if (!/^\d{4}$/.test(otp || "")) {
+                const error = new Error(
+                    "ADMIN_OTP must be exactly 4 digits."
+                );
+
+                error.statusCode = 500;
+                throw error;
+            }
+        }
+
+        // Invalid environment
+        else {
+            const error = new Error(
+                "Invalid NODE_ENV."
+            );
+
+            error.statusCode = 500;
+            throw error;
+        }
     }
 
-    // Use a fixed OTP only in development; production always gets a random OTP.
-    const otp = developmentOtp || generateOtp();
+   
+    // NORMAL USER OTP
+   
+    else {
+        // Random OTP for normal users
+        otp = generateOtp();
+        otpDelivery = "email";
+    }
 
-    // Hash OTP
+    
+    // HASH OTP
+   
+
     const otpHash = hashOtp(otp);
 
-    // 4 seconds expiry
-    const expiresAt = new Date(Date.now() + 2 * 60 * 1000);
+    // OTP expires in 2 minutes
+    const expiresAt = new Date(
+        Date.now() + 2 * 60 * 1000
+    );
 
-
-   // Remove previous OTPs
-   await OtpVerification.destroy({ where: { userId }});
+    // Remove previous OTP
+    await OtpVerification.destroy({
+        where: { userId }
+    });
 
     // Save new OTP
-    await OtpVerification.create({userId,otpHash,expiresAt});
+    await OtpVerification.create({
+        userId,
+        otpHash,
+        expiresAt
+    });
 
-    if (!developmentOtp) {
+    // Send email ONLY for normal users
+    if (otpDelivery === "email") {
         await sendOtpEmail(email, otp);
     }
 
     return {
-        otpDelivery: developmentOtp ? "development" : "email"
+        otpDelivery
     };
-
 };
+
+
+
+// VERIFY OTP
+
 
 export const verifyOtpService = async (email, otp) => {
 
-    const user = await User.findOne({where: { email }});
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({
+        where: {
+            email: normalizedEmail
+        }
+    });
 
     if (!user) {
         const error = new Error("User not found.");
+
         error.statusCode = 404;
         throw error;
     }
 
-
     const otpRecord = await OtpVerification.findOne({
-        where: {  userId: user.id },
-
-        order: [   ["createdAt", "DESC"] ]
+        where: {
+            userId: user.id
+        },
+        order: [
+            ["createdAt", "DESC"]
+        ]
     });
-
 
     if (!otpRecord) {
         const error = new Error("OTP not found.");
+
         error.statusCode = 400;
         throw error;
     }
-
 
     // Check expiry
     if (new Date() > otpRecord.expiresAt) {
@@ -76,34 +144,41 @@ export const verifyOtpService = async (email, otp) => {
         await otpRecord.destroy();
 
         const error = new Error("OTP expired.");
-        error.statusCode = 400;
 
+        error.statusCode = 400;
         throw error;
     }
+
     // Hash received OTP
-     const otpHash = hashOtp(otp);
+    const otpHash = hashOtp(otp);
 
-
+    // Check OTP
     if (otpHash !== otpRecord.otpHash) {
 
-    otpRecord.attempts += 1;
-    await otpRecord.save();
+        otpRecord.attempts += 1;
 
-    if (otpRecord.attempts >= 5) {
-        await otpRecord.destroy();
+        await otpRecord.save();
 
-        const error = new Error(  "Too many incorrect OTP attempts." );
-       error.statusCode = 429;
+        if (otpRecord.attempts >= 5) {
+
+            await otpRecord.destroy();
+
+            const error = new Error(
+                "Too many incorrect OTP attempts."
+            );
+
+            error.statusCode = 429;
+            throw error;
+        }
+
+        const error = new Error("Invalid OTP.");
+
+        error.statusCode = 400;
         throw error;
     }
 
-    const error = new Error("Invalid OTP.");
-    error.statusCode = 400;
-    throw error;
-}
     // OTP correct
     await otpRecord.destroy();
-
 
     return user;
 };

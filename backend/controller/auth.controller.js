@@ -114,10 +114,60 @@ export const register = async (req, res) => {
 // };
 
 
+// export const login = async (req, res) => {
+
+//     try {
+
+//         const { email, password } = req.body;
+
+//         // Email required
+//         if (isEmpty(email)) {
+//             return res.status(400).json({
+//                 message: "Email is required."
+//             });
+//         }
+
+//         // Password required
+//         if (isEmpty(password)) {
+//             return res.status(400).json({
+//                 message: "Password is required."
+//             });
+//         }
+
+//         // Email format
+//         if (!validateEmail(email)) {
+//             return res.status(400).json({
+//                 message: "Invalid email format."
+//             });
+//         }
+
+        
+//         const requestedTestOtp = req.get("x-use-test-otp") === "true";
+
+//        const result = await loginUser(
+//     email.trim().toLowerCase(),
+//     password,
+//     { useTestOtp: requestedTestOtp }
+//   );
+
+//         return res.status(200).json({
+//             message: result.otpDelivery === "development"
+//                 ? "Development OTP created."
+//                 : "OTP sent to your email.",
+//             data: result
+//         });
+
+//     } catch (error) {
+
+//         return res.status( error.statusCode || 500 ).json({
+//             message:
+//                 error.message || "Internal server error."
+//         });
+//     }
+// };
+
 export const login = async (req, res) => {
-
     try {
-
         const { email, password } = req.body;
 
         // Email required
@@ -141,31 +191,34 @@ export const login = async (req, res) => {
             });
         }
 
-        
-        const requestedTestOtp = req.get("x-use-test-otp") === "true";
+        const result = await loginUser( email.trim().toLowerCase(),  password  );
 
-       const result = await loginUser(
-    email.trim().toLowerCase(),
-    password,
-    { useTestOtp: requestedTestOtp }
-  );
+        let message;
+
+        if (result.otpDelivery === "development") {
+            message = "Development admin OTP created.";
+        } else if (result.otpDelivery === "admin") {
+            message = "Admin OTP created.";
+        } else {
+            message = "OTP sent to your email.";
+        }
 
         return res.status(200).json({
-            message: result.otpDelivery === "development"
-                ? "Development OTP created."
-                : "OTP sent to your email.",
+            message,
             data: result
         });
 
     } catch (error) {
 
-        return res.status( error.statusCode || 500 ).json({
+        return res.status(
+            error.statusCode || 500
+        ).json({
             message:
-                error.message || "Internal server error."
+                error.message ||
+                "Internal server error."
         });
     }
 };
-
 export const verifyOtp = async (req, res) => {
 
     try {
@@ -186,10 +239,10 @@ export const verifyOtp = async (req, res) => {
             });
         }
 
-        // OTP must be 6 digits
-        if (!/^\d{6}$/.test(otp)) {
+        // OTP must be exactly 4 digits.
+        if (!/^\d{4}$/.test(otp)) {
             return res.status(400).json({
-                message: "OTP must be 6 digits."
+                message: "OTP must be 4 digits."
             });
         }
 

@@ -19,5 +19,5 @@ export function passwordsMatch(password, confirmPassword) {
 }
 
 export function isValidOtp(value) {
-  return /^\d{6}$/.test(value);
+  return /^\d{4}$/.test(value);
 }

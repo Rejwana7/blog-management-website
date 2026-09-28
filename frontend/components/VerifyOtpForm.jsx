@@ -25,8 +25,8 @@ export default function VerifyOtpForm() {
 
     if (value && !/^\d+$/.test(value)) {
       setError("OTP can contain only numbers.");
-    } else if (value.length > 6) {
-      setError("OTP must be exactly 6 digits.");
+    } else if (value.length > 4) {
+      setError("OTP must be exactly 4 digits.");
     } else {
       setError("");
     }
@@ -41,7 +41,7 @@ export default function VerifyOtpForm() {
       return;
     }
     if (!isValidOtp(otp)) {
-      setError("OTP must be exactly 6 digits.");
+      setError("OTP must be exactly 4 digits.");
       return;
     }
     if (!email) {
